@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 require("dotenv").config();
+const bcrypt = require('bcrypt');
 
 const port = process.env.PORT || 5000;
 const app = express();
@@ -35,10 +36,14 @@ const run = async () => {
 
         //API to create a new user
         app.put("/users", async (req, res) => {
-            const user = req.body;
-            // console.log(user)
-            await userCollection.insertOne(user);
-            res.send(user);
+            const email = req.body.email;
+            const password = req.body.password;
+            const number = req.body.number;
+            hashPass = await bcrypt.hash(password, 10);
+            const registeredUser = await userCollection.insertOne({ email, password: hashPass, number });
+            // console.log(registeredUser);
+
+            res.send(registeredUser);
         }
         );
     }
