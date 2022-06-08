@@ -17,6 +17,30 @@ const run = async () => {
     try {
         await client.connect();
         console.log("Connected to MongoDB");
+
+        const db = client.db("Deskala");
+        const userCollection = db.collection("users")
+
+        // API to Run Server 
+        app.get("/", async (req, res) => {
+            res.send("Server is Running");
+        });
+
+        // API to Get All Users
+        app.get("/users", async (req, res) => {
+            const users = await userCollection.find({}).toArray();
+            res.send(users);
+        }
+        );
+
+        //API to create a new user
+        app.put("/users", async (req, res) => {
+            const user = req.body;
+            // console.log(user)
+            await userCollection.insertOne(user);
+            res.send(user);
+        }
+        );
     }
     finally {
         // client.close(); 
