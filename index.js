@@ -20,7 +20,8 @@ const run = async () => {
         console.log("Connected to MongoDB");
 
         const db = client.db("Deskala");
-        const userCollection = db.collection("users")
+        const userCollection = db.collection("users");
+        const candidateCollection = db.collection("candidate");
 
         // API to Run Server 
         app.get("/", async (req, res) => {
@@ -33,6 +34,12 @@ const run = async () => {
             res.send(users);
         }
         );
+
+        // API to get all candidate
+        app.get("/candidates", async (req, res) => {
+            const candidates = await candidateCollection.find({}).toArray();
+            res.send(candidates)
+        })
 
         //API to create a new user
         app.put("/users", async (req, res) => {
