@@ -41,6 +41,25 @@ const run = async () => {
             res.send(candidates)
         })
 
+        // API to update a candidate with id
+        app.put("/candidates/:id", async (req, res) => {
+            const id = req.params.id;
+            const candidate = req.body;
+            // console.log(candidate, id);
+            await candidateCollection.updateOne({ _id: ObjectId(id) }, { $set: candidate });
+            res.send("Candidate Updated");
+        }
+        );
+
+        // API to delete a candidate with id
+        app.delete("/candidates/:id", async (req, res) => {
+            const id = req.params.id;
+            await candidateCollection.deleteOne({ _id: ObjectId(id) });
+            res.send("Candidate Deleted");
+        }
+        );
+
+
         //API to create a new user
         app.put("/users", async (req, res) => {
             const email = req.body.email;
