@@ -11,7 +11,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-const uri = "mongodb+srv://taskData:EnsvcHwV2eQfmsf7@cluster0.y4mhh.mongodb.net/?retryWrites=true&w=majority";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.y4mhh.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 const run = async () => {
@@ -46,8 +46,8 @@ const run = async () => {
             const id = req.params.id;
             const candidate = req.body;
             // console.log(candidate, id);
-            await candidateCollection.updateOne({ _id: ObjectId(id) }, { $set: candidate });
-            res.send("Candidate Updated");
+            const result = await candidateCollection.updateOne({ _id: ObjectId(id) }, { $set: candidate });
+            res.send(result);
         }
         );
 
@@ -59,6 +59,12 @@ const run = async () => {
         }
         );
 
+        // API to add a candidate
+        app.post("/candidates", async (req, res) => {
+            const candidate = req.body;
+            const result = await candidateCollection.insertOne(candidate);
+            res.send(result);
+        });
 
         //API to create a new user
         app.put("/users", async (req, res) => {
